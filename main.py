@@ -1,17 +1,36 @@
 from PyPDF2 import PdfReader, PdfWriter
+import os
 
-reader = PdfReader("input.pdf")
-writer = PdfWriter()
+def encrypter(file):
+    reader = PdfReader(file)
+    writer = PdfWriter()
+
+    password = input('Qual vai ser a senha para acessar o arquivo?\n')
+
+    for page in reader.pages:
+        writer.add_page(page)
+
+    writer.encrypt(password)
+
+    os.remove(file)
+
+    with open(file, "wb") as f:
+        writer.write(f)
 
 
-password = input('Qual cai ser a senha para acessar o arquivo?\n')
-# Add all pages to the writer
-for page in reader.pages:
-    writer.add_page(page)
+def takeFile():
+    try:
+        file = input('Qual o nome do arquivo (em PDF)\n')
+        encrypter(file)
 
-# Add a password to the new PDF
-writer.encrypt(password)
+    except:
+        check = file.split('.')
+        if check[-1] != 'pdf':
+            print('O arquivo deve estar em pdf\n\n---\n')
+            takeFile()
 
-# Save the new PDF to a file
-with open("encrypted-pdf.pdf", "wb") as f:
-    writer.write(f)
+
+    
+
+
+takeFile()
